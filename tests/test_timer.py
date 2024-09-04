@@ -41,8 +41,7 @@ class TestTimer(unittest.TestCase):
 
         elapsed_time = float(end_match.group(1))
         if expected_sleep_time is not None:
-            self.assertGreater(elapsed_time, expected_sleep_time)
-            self.assertLess(elapsed_time, expected_sleep_time + 0.1)
+            self.assertAlmostEqual(elapsed_time, expected_sleep_time, delta=0.1, msg="Elapsed time should be close to expected sleep time")
         else:
             self.assertLess(elapsed_time, 0.1, "Elapsed time should be less than 0.1 seconds for non-sleep operations")
 
