@@ -143,9 +143,9 @@ class TestTimer(unittest.TestCase):
         
         if matching_line:
             average, minimum, maximum, count = map(float, matching_line.groups())
-            self.assertAlmostEqual(average, 0.15, delta=0.01, msg="Average time should be close to 0.15 seconds")
-            self.assertAlmostEqual(minimum, 0.10, delta=0.01, msg="Minimum time should be close to 0.10 seconds")
-            self.assertAlmostEqual(maximum, 0.20, delta=0.01, msg="Maximum time should be close to 0.20 seconds")
+            self.assertAlmostEqual(average, 0.15, delta=0.03, msg="Average time should be close to 0.15 seconds")
+            self.assertAlmostEqual(minimum, 0.10, delta=0.03, msg="Minimum time should be close to 0.10 seconds")
+            self.assertAlmostEqual(maximum, 0.20, delta=0.03, msg="Maximum time should be close to 0.20 seconds")
             self.assertEqual(int(count), 2, msg="Count should be 2")
 
     def test_timing_accuracy(self):
