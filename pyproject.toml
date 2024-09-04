@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "todds_timer"
-version = "2024.09"
+version = "2024.09.04"
 authors = [
   { name="Todd", email="73101886+tch521@users.noreply.github.com" },
 ]
