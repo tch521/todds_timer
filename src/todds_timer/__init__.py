@@ -1,1 +1,1 @@
-from src.todds_timer.todds_timer import Timer
+from .todds_timer import Timer

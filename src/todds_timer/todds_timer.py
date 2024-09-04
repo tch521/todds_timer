@@ -4,7 +4,7 @@ import functools
 from collections import defaultdict, deque
 from typing import Any, Callable, Dict, List, Optional
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("todds_timer")
 
 
 class Timer:
