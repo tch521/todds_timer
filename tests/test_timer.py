@@ -127,7 +127,7 @@ class TestTimer(unittest.TestCase):
         log_lines = self.parse_log_lines()
         self.assertGreater(len(log_lines), 5, "Expected at least 6 lines of output")
 
-        header_pattern = r"^Average \| Minimum \| Maximum \| Count \| Task name$"
+        header_pattern = r"^ Average \| Minimum \| Maximum \| Count \| Task$"
         self.assertTrue(re.match(header_pattern, log_lines[4]), "Expected header line for print_average_times")
 
         data_pattern = r"^\s*(\d+\.\d+) \|\s*(\d+\.\d+) \|\s*(\d+\.\d+) \|\s*(\d+) \| Test for print_average_times$"
