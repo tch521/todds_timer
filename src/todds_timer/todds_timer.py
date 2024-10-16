@@ -250,7 +250,7 @@ class Timer:
         max_count: Optional[int] = None,
         log_level: int = logging.INFO,
         fill_char: str = " ",
-        number_pad_character: str = "0",
+        number_pad_character: str = " ",
     ) -> None:
         """
         Print a summary table of timing statistics for all tracked tasks.
@@ -276,7 +276,7 @@ class Timer:
             Defaults to space (' ') however some users may prefer an underscore
         number_pad_character : str, optional
             The character to use for padding numbers to the right, sensible options
-            include "0", " ", or the same character as `fill_char`
+            include '0', or the same character as `fill_char`, but defaults to ' '.
 
         Raises
         ------
