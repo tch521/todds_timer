@@ -78,6 +78,7 @@ class Timer:
 
     _nesting_level: int = 1  # Start at 1 to distinguish from ordinary log messages
     _task_times: Dict[str, deque] = defaultdict(lambda: deque(maxlen=120))
+    log_level: int = logging.DEBUG
 
     def __init__(self, task_name: str, args: tuple = (), kwargs: dict = {}):
         """
@@ -106,7 +107,7 @@ class Timer:
         self.kwargs = kwargs
         self.elapsed_times: List[float] = []
 
-    def __enter__(self) -> 'Timer':
+    def __enter__(self) -> "Timer":
         """
         Start timing when entering the context.
 
@@ -126,7 +127,7 @@ class Timer:
         """
         self.start_time = time.time()
         self.indent = "----" * Timer._nesting_level
-        logger.debug(f"{self.indent}STARTED {self.task_name.format(*self.args, **self.kwargs)}")
+        logger.log(Timer.log_level, f"{self.indent}STARTED {self.task_name.format(*self.args, **self.kwargs)}")
         Timer._nesting_level += 1
         return self
 
@@ -161,9 +162,10 @@ class Timer:
         self.elapsed_times.append(elapsed_time)
         Timer._task_times[self.task_name].append(elapsed_time)
         formatted_time = f"{elapsed_time:06.3f}"
-        logger.debug(
+        logger.log(
+            Timer.log_level,
             f"{self.indent}COMPLETED (in {formatted_time} seconds) "
-            f"{self.task_name.format(*self.args, **self.kwargs)}"
+            f"{self.task_name.format(*self.args, **self.kwargs)}",
         )
 
     def __call__(self, fn: Callable) -> Callable:
@@ -191,11 +193,27 @@ class Timer:
         - The original function's metadata (name, docstring, etc.) is preserved
           using the @functools.wraps decorator.
         """
+
         @functools.wraps(fn)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             with Timer(self.task_name, args=args, kwargs=kwargs):
                 return fn(*args, **kwargs)
+
         return wrapper
+
+    @classmethod
+    def set_log_level(cls, level: int) -> None:
+        """
+        Set the log level for all Timer instances.
+
+        Parameters
+        ----------
+        level : int
+            The logging level to use for Timer messages.
+            Use standard logging module constants:
+            logging.DEBUG, logging.INFO, logging.WARNING, etc.
+        """
+        cls.log_level = level
 
     @classmethod
     def get_average_time(cls, task_name: str) -> float:
@@ -226,7 +244,13 @@ class Timer:
         return sum(times) / len(times) if times else 0
 
     @classmethod
-    def print_average_times(cls, sort: Optional[str] = None, max_count: Optional[int] = None) -> None:
+    def print_average_times(
+        cls,
+        sort: Optional[str] = None,
+        max_count: Optional[int] = None,
+        log_level: Optional[int] = logging.INFO,
+        fill_char: str = " ",
+    ) -> None:
         """
         Print a summary table of timing statistics for all tracked tasks.
 
@@ -244,6 +268,12 @@ class Timer:
         max_count : int, optional
             If specified, only the most recent `max_count` timings for each
             task are considered in the statistics calculation.
+        log_level : int, optional
+            The logging level to use for the output. Defaults to logging.INFO.
+        fill_char : str, optional
+            The character to use for padding in the formatted output.
+            Defaults to space (' '). Common alternatives might include
+            underscore ('_') or hyphen ('-').
 
         Raises
         ------
@@ -253,12 +283,18 @@ class Timer:
         Notes
         -----
         - This method is particularly useful for identifying which tasks are
-          taking the most time on average and how consistent their execution
-          times are.
-        - The output is logged at the INFO level, so ensure your logging
-          configuration will display INFO messages if you want to see the output.
+        taking the most time on average and how consistent their execution
+        times are.
+        - The output is logged at the specified log_level, so ensure your logging
+        configuration will display messages at this level if you want to see the output.
         """
-        logger.info("Average | Minimum | Maximum | Count | Task name")
+        logger.log(
+            log_level,
+            fill_char
+            + f"{fill_char}|{fill_char}".join(
+                [f"{'Average':7}", f"{'Minimum':7}", f"{'Maximum':7}", f"{'Count':5}", "Task"]
+            ),
+        )
         if sort is None:
             sorted_task_names = cls._task_times.keys()
         elif sort == "name":
@@ -274,4 +310,15 @@ class Timer:
                 if max_count is not None and len(times) > max_count:
                     times = times[-max_count:]
                 avg_time = sum(times) / len(times)
-                logger.info(f"{avg_time:7.3f} | {min(times):7.3f} | {max(times):7.3f} | {len(times):5d} | {task_name}")
+                logger.log(
+                    log_level,
+                    "|".join(
+                        [
+                            fill_char + f"{avg_time:{fill_char}>7.3f}" + fill_char,
+                            fill_char + f"{min(times):{fill_char}>7.3f}" + fill_char,
+                            fill_char + f"{max(times):{fill_char}>7.3f}" + fill_char,
+                            fill_char + f"{len(times):{fill_char}>5d}" + fill_char,
+                            fill_char + task_name,
+                        ]
+                    ),
+                )
