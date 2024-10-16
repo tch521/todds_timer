@@ -87,11 +87,11 @@ Timer.print_average_times(sort="name")
 ```
 Output:
 ```
-INFO Average | Minimum | Maximum | Count | Task name
-INFO   0.000 |   0.000 |   0.000 |     1 | Calculate sum of 5 and 7
-INFO   0.000 |   0.000 |   0.000 |     1 | Calculating sum
-INFO   0.000 |   0.000 |   0.000 |     1 | Inner operation
-INFO   0.000 |   0.000 |   0.000 |     1 | Outer operation
+INFO  Average | Minimum | Maximum | Count | Task name
+INFO    0.000 |   0.000 |   0.000 |     1 | Calculate sum of 5 and 7
+INFO    0.000 |   0.000 |   0.000 |     1 | Calculating sum
+INFO    0.000 |   0.000 |   0.000 |     1 | Inner operation
+INFO    0.000 |   0.000 |   0.000 |     1 | Outer operation
 ```
 
 ## Configuration
