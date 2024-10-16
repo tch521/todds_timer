@@ -246,10 +246,11 @@ class Timer:
     @classmethod
     def print_average_times(
         cls,
-        sort: Optional[str] = None,
+        sort: str = "default",
         max_count: Optional[int] = None,
-        log_level: Optional[int] = logging.INFO,
+        log_level: int = logging.INFO,
         fill_char: str = " ",
+        number_pad_character: str = "0",
     ) -> None:
         """
         Print a summary table of timing statistics for all tracked tasks.
@@ -260,20 +261,22 @@ class Timer:
 
         Parameters
         ----------
-        sort : {'name', 'average', None}, optional
+        sort : {'default', 'name', 'average'}, optional
             Specifies how to sort the output table:
+            - 'default': No sorting, tasks appear in the order they were first timed
             - 'name': Sort tasks alphabetically by name
             - 'average': Sort tasks by their average execution time
-            - None: No sorting, tasks appear in the order they were first timed
         max_count : int, optional
             If specified, only the most recent `max_count` timings for each
             task are considered in the statistics calculation.
         log_level : int, optional
-            The logging level to use for the output. Defaults to logging.INFO.
+            The logging level to use for the output. Defaults to logging.INFO (i.e. 10)
         fill_char : str, optional
-            The character to use for padding in the formatted output.
-            Defaults to space (' '). Common alternatives might include
-            underscore ('_') or hyphen ('-').
+            The character to use for padding between columns in the formatted output.
+            Defaults to space (' ') however some users may prefer an underscore
+        number_pad_character : str, optional
+            The character to use for padding numbers to the right, sensible options
+            include "0", " ", or the same character as `fill_char`
 
         Raises
         ------
@@ -287,6 +290,9 @@ class Timer:
         times are.
         - The output is logged at the specified log_level, so ensure your logging
         configuration will display messages at this level if you want to see the output.
+        - The table format uses `fill_char` for padding between columns and
+        `number_pad_character` for padding within numeric fields. This allows
+        for flexible formatting of the output table.
         """
         logger.log(
             log_level,
@@ -295,7 +301,7 @@ class Timer:
                 [f"{'Average':7}", f"{'Minimum':7}", f"{'Maximum':7}", f"{'Count':5}", "Task"]
             ),
         )
-        if sort is None:
+        if sort == "default":
             sorted_task_names = cls._task_times.keys()
         elif sort == "name":
             sorted_task_names = sorted(cls._task_times.keys())
@@ -314,10 +320,10 @@ class Timer:
                     log_level,
                     "|".join(
                         [
-                            fill_char + f"{avg_time:{fill_char}>7.3f}" + fill_char,
-                            fill_char + f"{min(times):{fill_char}>7.3f}" + fill_char,
-                            fill_char + f"{max(times):{fill_char}>7.3f}" + fill_char,
-                            fill_char + f"{len(times):{fill_char}>5d}" + fill_char,
+                            fill_char + f"{avg_time:{number_pad_character}>7.3f}" + fill_char,
+                            fill_char + f"{min(times):{number_pad_character}>7.3f}" + fill_char,
+                            fill_char + f"{max(times):{number_pad_character}>7.3f}" + fill_char,
+                            fill_char + f"{len(times):{number_pad_character}>5d}" + fill_char,
                             fill_char + task_name,
                         ]
                     ),
