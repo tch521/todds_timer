@@ -2,7 +2,10 @@ import time
 import logging
 import functools
 from collections import defaultdict, deque
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TypeVar, ParamSpec
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 logger = logging.getLogger("todds_timer")
 
@@ -168,9 +171,9 @@ class Timer:
             f"{self.task_name.format(*self.args, **self.kwargs)}",
         )
 
-    def __call__(self, fn: Callable) -> Callable:
+    def __call__(self, fn: Callable[P, R]) -> Callable[P, R]:
         """
-        Allow the Timer to be used as a decorator.
+        Allow the Timer to be used as a decorator preserving the wrapped function's type hints.
 
         This method enables the Timer class to be used as a function decorator,
         automatically timing the execution of the decorated function.
@@ -195,7 +198,7 @@ class Timer:
         """
 
         @functools.wraps(fn)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             with Timer(self.task_name, args=args, kwargs=kwargs):
                 return fn(*args, **kwargs)
 
