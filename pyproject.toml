@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "todds_timer"
-version = "2024.10.16"
+version = "2025.09.12"
 authors = [
   { name="Todd", email="73101886+tch521@users.noreply.github.com" },
 ]
 description = "A custom timer utility for Python"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

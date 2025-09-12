@@ -66,6 +66,16 @@ class TestTimer(unittest.TestCase):
 
         for line, pattern in zip(log_lines, patterns):
             self.assertTrue(re.match(pattern, line), f"Line '{line}' doesn't match pattern '{pattern}'")
+    
+    def test_context_manager_with_args(self):
+        with Timer("Testing as a context manager with args {0} {1}", args=("arg1", "arg2")):
+            pass
+        self.assert_log_structure("Testing as a context manager with args arg1 arg2")
+
+    def test_context_manager_with_kwargs(self):
+        with Timer("Testing as a context manager with kwargs {kwarg1} {kwarg2:.2f}", kwargs={"kwarg1": "hello", "kwarg2": 3.14159}):
+            pass
+        self.assert_log_structure("Testing as a context manager with kwargs hello 3.14")
 
     def test_decorator_basic(self):
         @Timer("Testing as a basic decorator")
